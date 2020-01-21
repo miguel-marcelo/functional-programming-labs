@@ -4,126 +4,208 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class StreamsLab {
 
-	// TODO: replace "REPLACE_WITH_LAMBDA" to filter all the people older than 25
+	// replace "REPLACE_WITH_LAMBDA" to filter all the people older than 25
 	@Test
-	void olderThan25Test() {
-		People.getSomePeople().stream()
-				// .filter(LAMBDA)
-				.forEach(System.out::println);
+	void olderThan25Test() {		
+		List<People> people = new ArrayList<>();
+		people = People.getSomePeople().stream()
+				.filter(p -> p.age > 25)		
+				.collect(Collectors.toList());	
+//		.forEach(System.out::println);
+
+		Assertions.assertEquals(people.size(), 3);		
+		
 	}
 
-	// TODO: replace "STREAM_OPERATION" and "REPLACE_WITH_LAMBDA" to filter all the
+	// Replace "STREAM_OPERATION" and "REPLACE_WITH_LAMBDA" to filter all the
 	// people with names of 5 letters
 	@Test
 	void namesOf5LettersTest() {
-		People.getSomePeople().stream()
-				// .STREAM_OPERATION(REPLACE_WITH_LAMBDA)
-				.forEach(System.out::println);
+		List<People> people = new ArrayList<>();
+		
+		people = People.getSomePeople().stream()
+				.filter( p -> p.name.length() == 5)	
+				.collect(Collectors.toList());
+//		.forEach(System.out::println);
+		
+		Assertions.assertEquals(people.size(), 4);
 	}
 
-	// TODO: replace TODO section on bellow method to get all the people younger
+	// replace section on bellow method to get all the people younger
 	// than 20 and print its name on uppercase
 	@Test
-	void namesonUpperCaseTest() {
-		People.getSomePeople().stream()
-				// TODO: streams operations as requested
-				.forEach(System.out::println);
+	void namesonUpperCaseTest() {		
+		List<People> people = new ArrayList<>();
+		
+		people = People.getSomePeople().stream()
+				.filter(p -> p.age < 20)
+				.peek(p -> p.name.toUpperCase())	
+				.collect(Collectors.toList());	
+//				.forEach(System.out::println);
+		
+		Assertions.assertEquals(people.size(), 3);
 	}
 
 	// TODO: replace TODO section on bellow method to get the oldest person and
 	// print its name
 	@Test
 	void olderPersonTest() {
-		People.getSomePeople().stream()
-				// TODO: streams operations as requested
-				.forEach(System.out::println);
+		String olderPerson = "";
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.age);
+		People p1 = People.getSomePeople().stream()
+				.max(c1).get();
+		olderPerson = p1.name;
+//		System.out.println(p1.name);
+		
+		Assertions.assertEquals("Pedro", olderPerson);
+		
 	}
 
 	// TODO: replace TODO section on bellow method to sort all the people and print
 	// them (not just the name, the complete object)
 	@Test
 	void sortPeopleByNameTest() {
-		People.getSomePeople().stream()
-				// TODO: streams operations as requested
-				.forEach(System.out::println);
+		List<People> people = new ArrayList<>();
+		
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.name);
+		
+		people = People.getSomePeople().stream()
+				.sorted(c1)
+				.collect(Collectors.toList());	
+//				.forEach(System.out::println);
+		Assertions.assertEquals(people.size(), 7);
+		Assertions.assertEquals(people.get(0).name, "Cori");
+		Assertions.assertEquals(people.get(6).name, "Roberto");
 	}
 
 	// TODO: replace TODO section on bellow method to calculate the avg age of the
 	// people list
 	@Test
 	void avgAgePeopleTest() {
-		People.getSomePeople().stream()
-		// TODO: streams operations as requested
+		int avg = 0;
+		avg = (int) People.getSomePeople().stream()
+		.mapToInt(p -> p.age)
+		.average().getAsDouble();
+		Assertions.assertEquals(avg, 26);
 		;
 	}
 
 	// TODO: replace TODO section on bellow method to search for any person
 	@Test
 	void findOldestPersonBeetween25And40Test() {
-		People.getSomePeople().stream()
-		// TODO: streams operations as requested, then uncomment bellow line
-		// .ifPresent(System.out::println)
-		;
+		String oldestPersonBetween25And40Name = "";
+		
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.age);
+		
+		oldestPersonBetween25And40Name = People.getSomePeople().stream()
+		.filter(p -> p.age >= 25 && p.age <= 40)
+		.max(c1)
+		.get().name;
+//		.ifPresent(System.out::println);
+		
+		Assertions.assertEquals(oldestPersonBetween25And40Name, "Pedro");
+		
 	}
 
 	// TODO: replace TODO section on bellow method to gather all the Persons whose
 	// name starts with R in a List, then print it
 	@Test
 	void collectPeopleTest() {
-		People.getSomePeople().stream()
-		// TODO: streams operations as requested, then uncomment bellow line
-		// .ifPresent(System.out::println)
-		;
+		List<People> peopleWithR = new ArrayList<>();
+		peopleWithR = People.getSomePeople().stream()
+				.filter( p -> p.name.startsWith("R"))	
+				.collect(Collectors.toList());
+//				.forEach(System.out::println);
+		Assertions.assertEquals(peopleWithR.size(), 2);
 	}
 
 	// TODO: replace TODO section on bellow method to sort all the people by salary
 	@Test
 	void sortPeopleBySalaryTest() {
-		People.getSomePeople().stream()
-				// TODO: streams operations as requested, then uncomment bellow line
-				.forEach(System.out::println);
+		List<People> people = new ArrayList<>();
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.roundedSalary).thenComparing((People p) -> p.name);
+		
+		people = 
+				People.getSomePeople().stream()
+				.sorted(c1)
+				.collect(Collectors.toList());	
+//				.forEach(System.out::println);		
+		Assertions.assertEquals(people.size(), 7);
+		Assertions.assertEquals(people.get(0).name, "Roberto");
+		Assertions.assertEquals(people.get(6).name, "Pedro");
+		
 	}
 
 	// TODO: replace TODO section on bellow method to sort all the people by salary
 	// and when 2 or more have the same salary sort those by name
 	@Test
 	void sortPeopleBySalaryAndNameTest() {
-		People.getSomePeople().stream()
-				// TODO: streams operations as requested, then uncomment bellow line
-				.forEach(System.out::println);
+		List<People> people = new ArrayList<>();
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.roundedSalary).thenComparing((People p) -> p.name);
+		
+		people = 
+				People.getSomePeople().stream()
+				.sorted(c1)
+				.collect(Collectors.toList());	
+//				.forEach(System.out::println);		
+		Assertions.assertEquals(people.size(), 7);
+		Assertions.assertEquals(people.get(0).name, "Roberto");
+		Assertions.assertEquals(people.get(6).name, "Pedro");
 	}
 
 	// TODO: replace TODO section on bellow method to group people in 2 groups by
 	// their age, 1 older than 25, the other younger or equal than 25
 	@Test
 	void groupPeopleByAgeTest() {
+		Map<Boolean, List<Integer>> peopleDivided = new HashMap<>();
+		
+		peopleDivided =
 		People.getSomePeople().stream()
-		// TODO: streams operations as requested, then uncomment bellow line
+		.map(p -> p.age)
+		.collect(Collectors.partitioningBy(i -> i > 25))
 		;
+		Assertions.assertEquals(peopleDivided.get(false).size(), 4);
+		Assertions.assertEquals(peopleDivided.get(true).size(), 3);
 	}
 	
 	// TODO: replace TODO section on bellow method to print all the people who earn less than 25k sorted by salary (use takeWhile)
-		@Test
-		void collectAllPeopleWhoEarnLessThan25KTest() {
-			People.getSomePeople().stream()
-			// TODO: streams operations as requested, then uncomment bellow line
-			.forEach(System.out::println);
-		}
+	@Test
+	void collectAllPeopleWhoEarnLessThan25KTest() {
+		List<People> people = new ArrayList<>();
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.roundedSalary).thenComparing((People p) -> p.name);
 		
-		// TODO: replace TODO section on bellow method to print all the people who earn less than 25k sorted by salary(use dropWhile)
-				@Test
-				void collectAllPeopleWhoEarnMoreThan25KTest() {
-					People.getSomePeople().stream()
-					// TODO: streams operations as requested, then uncomment bellow line
-					.forEach(System.out::println);
+		people = 
+				People.getSomePeople().stream()
+				.sorted(c1)
+				.takeWhile(p -> p.roundedSalary < 25000)
+				.collect(Collectors.toList());	
+		Assertions.assertEquals(people.size(), 4);
+	}
+	
+	// TODO: replace TODO section on bellow method to print all the people who earn less than 25k sorted by salary(use dropWhile)
+	@Test
+	void collectAllPeopleWhoEarnMoreThan25KTest() {
+		List<People> people = new ArrayList<>();
+		Comparator<People> c1 = Comparator.comparing((People p) -> p.roundedSalary).thenComparing((People p) -> p.name);
+		
+		people = 
+				People.getSomePeople().stream()
+				.sorted(c1)
+				.dropWhile(p -> p.roundedSalary < 25000)
+				.collect(Collectors.toList());	
+		Assertions.assertEquals(people.size(), 3);
 
-				}
+	}
 
 }
 
